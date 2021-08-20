@@ -1,7 +1,7 @@
 
 
 #the array or the xo
-
+import os
 """
     [[00,01,02],
      [10,11,12],
@@ -108,5 +108,95 @@ while flag:
             flag = False
             break
             
-    
+
+class Game():
+    def __init__(self):
+        self.board = [[' ' for i in range(3)] for j in range(3)]
+        self.player_1 = None
+        self.player_2 = None
+
+    def show_board(self):
+        for i in range(3):
+            print('+-------'*3+'+')
+            print('|       '*3+'|')
+            for j in range(3):
+                print('|   '+self.board[i][j]+"   ", end='')
+                print('|')
+                print('|       '*3+'|')
+        print('+-------'*3+'+')
+    def show_menu(self):
+        while True:
+            print("1) New Game")
+            if os.path.isfile('game.json'):
+                print("2) Continue Game")
+            print("3) Quit")
+            try:
+                x = int(input("---> "))
+                if x == 1:
+                    self.show_new_game_menu()
+                elif x == 2:
+                    self.load_game()
+                elif x == 3:
+                    self.quit()
+                else:
+                    continue
+            except:
+                continue
+    def show_new_game_menu(self):
+        while True:
+            print("1) Single player")
+            print("2) Multi player")
+            print("3) Back")
+            try:
+                x = int(input("---> "))
+                if x == 1:
+                    self.show_single_player_menu()
+                elif x == 2:
+                    self.show_multi_player_menu()
+                elif x == 3:
+                    self.show_menu()
+                else:
+                    continue
+            except:
+                continue
+    def show_single_player_menu(self):
+        print("feature coming soon...")
+        self.show_new_game_menu()
+
+    def show_multi_player_menu(self):
+        while True:
+            print("1) Local Multiplayer")
+            print("2) Same Screen")
+            print("3) Back")
+            try:
+                x = int(input("---> "))
+                if x == 1:
+                    print("feature coming soon...")
+                    self.show_multi_player_menu()
+                elif x == 2:
+                    self.same_screen_play()
+                elif x == 3:
+                    self.show_new_game_menu()
+            except:
+                continue
+
+    def load_game(self):
+        pass
+
+    def start(self):
+        self.show_menu()
+        
+    def same_screen_play(self):
+        self.get_player_names()
+
+
+    def quit(self):
+        print("Closing game ...")
+
+    def resume(self):
+        pass
+
+    def get_player_names(self):
+        self.player_1 = input("Player 1 [X] Name: ")
+        self.player_2 = input("Player 2 [O] Name: ")
 
