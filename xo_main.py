@@ -1,112 +1,192 @@
+import os
+import sys
+import time
 
-
-#the array or the xo
-
-"""
-    [[00,01,02],
-     [10,11,12],
-     [20,21,22]]
-"""
-def p_r_box(box):
-    """Prints the xo box when called"""
-    #print(f"{box[0]}\n{box[1]}\n{box[2]}\n")
-    for i in range(3):
-        print('+-------'*3+'+')
-        print('|       '*3+'|')
-        for j in range(3):
-            print('|   '+box[i][j]+"   ",end='')
-        print('|')
-        print('|       '*3+'|')
-    print('+-------'*3+'+')
-            
-                        
-
-def lispi(a):
-    """for splitting user input"""
-    a = int(a)
-    a_1 = (a)//10
-    a_2 = (a)%10
-    return a_1,a_2
-
-    
-def checkbox(xo_fill):
-    a,b,c = '00' in xo_fill,'01' in xo_fill,'02' in xo_fill
-    d,e,f = '10' in xo_fill,'11' in xo_fill,'12' in xo_fill
-    g,h,i = '20' in xo_fill,'21' in xo_fill,'22' in xo_fill
-    #diagonal_check
-    if (a and e and i) or (c and e and g):
-        return True
-    #horizontal_check
-    elif (a and b and c) or (d and e and f) or (g and h and i):
-        return True
-    #vertical_check
-    elif (a and d and g) or (b and e and h) or (c and f and i):
-        return True
-    else:
-        return False
+class Game():
+    def __init__(self):
+        self.help_board = [[str(j*3+i+1) for i in range(3)] for j in range(3)]
+        self.player_1 = None
+        self.player_2 = None
+        self.scores = [0,0]
+        self.help = False
+        self.reset_board()
+    def clear_all(self):
+        os.system('clear')
+        print('')
+        print(' '*12+'+------------------------------+')
+        print(' '*12+'|          X O Game            |')
+        print(' '*12+'+------------------------------+')
+        print('')
+    def show_board(self,board):
+        for i in range(3):
+            print(' '*12+'+-------'*3+'+')
+            print(' '*12+'|       '*3+'|')
+            print(' '*12,end='')
+            for j in range(3):
+                print('|   '+board[i][j]+"   ", end='')
+            print('|')
+            print(' '*12+'|       '*3+'|')
+        print(' '*12+'+-------'*3+'+')
+        print('')
+    def show_menu(self,options,close = 'Back',conds={}):
+        keys = list(options.keys())
+        for i in range(len(keys)):
+            if keys[i] in conds:
+                if not conds[keys[i]]:
+                    del options[keys[i]]
+        options[close] = False
+        keys = list(options.keys())
+        while not options[close]:
+            self.clear_all()
+            for i in range(len(keys)):
+                print(f"{i+1}) {keys[i]}")
+            try:
+                choice = input("\n\n---> ")
+                if choice == 'q':
+                    options[close] = True
+                choice = int(choice)
+                for i in range(len(keys)-1):
+                    if choice == i+1:
+                        if type(options[keys[i]]) == dict:
+                            self.show_menu(options=options[keys[i]])
+                        else:
+                            self.nav(options[keys[i]])
+                        break
+                if choice == len(keys):
+                    options[close] = True
+            except:
+                continue
+    def load(self):
+        self.feature_coming_soon()
+    def save(self):
+        pass
+    def feature_coming_soon(self):
+        self.clear_all()
+        print('feature coming soon')
+        time.sleep(1)
+    def nav(self,goto):
+        self.mode = goto
+        if goto == 'singleplay':
+            self.feature_coming_soon()
+        elif goto == 'localmultiplay':
+            self.feature_coming_soon()
+        elif goto == 'samescreen':
+            self.samescreen()
+        elif goto == 'loadgame':
+            self.load()
+    def singleplay(self): # single player mode with AI
+        pass
+    def localmultiplay(self): # Local network Multiplayer
+        pass
+    def samescreen(self): # Same screen Multiplayer
+        self.clear_all()
+        self.show_board(self.help_board)
+        print('Type the number to fill the board!')
+        if self.player_1 == None or self.player_2 == None:
+            self.player_1 = input("Player 1 [X] Name: ")
+            self.player_2 = input("Player 2 [O] Name: ")
+        while True:
+            try:
+                self.clear_all()
+                print(f'{self.player_1} Score : {self.scores[0]}')
+                print(f'{self.player_2} Score : {self.scores[1]}')
+                self.show_board(self.board)
+                if self.turn%2 == 0:
+                    self.coin = 'X'
+                    print(f"{self.player_1}'s turn [X]")
+                else:
+                    self.coin = 'O'
+                    print(f"{self.player_2}'s turn [O]")
+                choice = input("\n\n---> ")
+                if choice == 'q':
+                    break
+                choice = int(choice)
+                if choice < 1 or choice > 9:
+                    print('Please Type number between 1 to 9')
+                    time.sleep(0.5)
+                else:
+                    i = (choice-1)//3
+                    j = (choice-1)%3
+                    if self.board[i][j] == 'X' or self.board[i][j] == 'O':
+                        print(f'Place : {choice} is already filled')
+                        time.sleep(0.5)
+                        continue
+                    self.board[i][j] = self.coin
+                    self.turn += 1
+                    self.check_board()
+                    
+            except:
+                print('Please Type number between 1 to 9')
+                time.sleep(0.5)
+                
+                print('Please Type number between 1 to 9')
+                time.sleep(0.5)
+    def who_win(self):
+        for i in range(3):
+            if self.board[i][0] == self.board[i][1] and self.board[i][0] == self.board[i][2] and self.board[0][i] != ' ':
+                return self.board[i][0]
+            elif self.board[0][i] == self.board[1][i] and self.board[0][i] == self.board[2][i] and self.board[i][0] != ' ':
+                return self.board[0][i]
+        if self.board[0][0] == self.board[1][1] and self.board[0][0] == self.board[2][2] and self.board[0][0] != ' ':
+            return self.board[0][0]
+        elif self.board[0][2] == self.board[1][1] and self.board[0][2] == self.board[2][0] and self.board[0][2] != ' ':
+            return self.board[0][2]  
+        else:
+            return ''
+    def show_win(self,player):
+        self.clear_all()
+        self.show_board(self.board)
+        print(' '*12+f'{player} wins!!! ')
+        print(f'{self.player_1} Score : {self.scores[0]}')
+        print(f'{self.player_2} Score : {self.scores[1]}')
+        print('\n\n\n')
+        print('Press q to quit')
+        choice = input("\n\n---> ")
+        self.reset_board()
+        if choice == 'q':
+            sys.exit()
+    def reset_board(self):
+        self.board = [[' ' for i in range(3)] for j in range(3)]
+        if self.help:
+            self.board = self.help_board
+        self.turn = 0
+    def check_board(self):
+        win = self.who_win()
+        if win == 'X':
+            self.scores[0] += 1
+            self.show_win(self.player_1)
+            self.reset_board()
+            self.swap()
+        elif win == 'O':
+            self.scores[1] += 1
+            self.show_win(self.player_2)
+            self.reset_board()
+            self.swap()
+        elif self.turn == 9 and win == '':
+            print("draw")
+            self.reset_board()
+            self.swap()        
+    def swap(self):
+        c = self.player_1
+        self.player_1 = self.player_2
+        self.player_2 = c
+        self.scores = self.scores[::-1]    
+    def start(self):
+        self.show_menu(options={
+            'New Game': {
+                'Single player':'singleplay',
+                'Multi player': {
+                    'Local Multiplayer':'localmultiplay',
+                    'Same Screen':'samescreen'
+                }
+            },
+            'Continue Game': 'loadgame'
+        },
+        close = 'Quit', 
+        conds={'Continue Game': os.path.isfile('game.json')})
         
 
-#game_program
 
-
-xo_fill = []
-flag = True
-while flag:
-
-    player_1 = input("Player 1 [X] Name: ")
-    player_2 = input("Player 2 [O] Name: ")
-
-    play_1_score = 0
-    play_2_score = 0
- 
-    gbox = [
-            ['0','1','2'],
-            ['3','4','5'],
-            ['6','7','8']
-            ]
-
-    while True:     
-        p_r_box(gbox)
-        print("-"*20+f"[Score :: {player_1}-{play_1_score} : {player_2}-{play_2_score}]")
-        while len(xo_fill)<9:
-#X's    
-            play_1 = int(input("X's positional input: "))
-            play_1 = f"{play_1//3}{play_1%3}"
-            xo_fill.append(play_1)
-            a_1,a_2 = lispi(play_1)
-            ob = 'x'
-            gbox[a_1][a_2] = ob
-            p_r_box(gbox)
-    
-            if checkbox(xo_fill[::2]):
-                print("X is Winner")
-                play_1_score += 1
-                break
-    
-            
-#O's    
-            play_2 = int(input("O's positional input: "))
-            play_2 = f"{play_2//3}{play_2%3}"
-            xo_fill.append(play_2)
-            a_1,a_2 = lispi(play_2)
-            ob = 'o'
-            gbox[a_1][a_2] = ob
-            p_r_box(gbox)
-
-            if checkbox(xo_fill[1::2]):
-                print("O is Winner")
-                play_2_score += 1
-                break
-    
-#----
-        p_ = int(input("\nWant to continue?\n1.Continue\n2.New game\n3.Quit\n(select number):"))
-        if p_ == 1:
-            continue 
-        elif p_ == 2:
-            break
-        else:
-            flag = False
-            break
-            
-    
-
+if __name__ == "__main__":
+    g = Game()
+    g.start()
