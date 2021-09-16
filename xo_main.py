@@ -118,6 +118,7 @@ class Game():
                     print(f"{self.player_2}'s turn [O]")
                 choice = input("\n\n---> ")
                 if choice == 'q':
+                    self.reset_board()
                     break
                 choice = int(choice)
                 if choice < 1 or choice > 9:
@@ -143,9 +144,9 @@ class Game():
     
     def who_win(self):
         for i in range(3):
-            if self.board[i][0] == self.board[i][1] and self.board[i][0] == self.board[i][2] and self.board[0][i] != ' ':
+            if self.board[i][0] == self.board[i][1] and self.board[i][0] == self.board[i][2] and self.board[i][0] != ' ':
                 return self.board[i][0]
-            elif self.board[0][i] == self.board[1][i] and self.board[0][i] == self.board[2][i] and self.board[i][0] != ' ':
+            elif self.board[0][i] == self.board[1][i] and self.board[0][i] == self.board[2][i] and self.board[0][i] != ' ':
                 return self.board[0][i]
         if self.board[0][0] == self.board[1][1] and self.board[0][0] == self.board[2][2] and self.board[0][0] != ' ':
             return self.board[0][0]
